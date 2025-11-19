@@ -17,27 +17,7 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
-Data modules
-
-Add new module to import list below in ascending order,
-file name must match corresponding key name
-in template/setting_module.py dictionary.
+Web server modules
 """
 
-__all__ = [
-    "module_delta",
-    "module_energy",
-    "module_force",
-    "module_fuel",
-    "module_hybrid",
-    "module_mapping",
-    "module_notes",
-    "module_relative",
-    "module_sectors",
-    "module_stats",
-    "module_vehicles",
-    "module_webserver",
-    "module_wheels",
-]
-
-from . import *
+__all__ = ["websocket_server", "http_server"]

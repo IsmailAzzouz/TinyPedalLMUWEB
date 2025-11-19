@@ -111,6 +111,11 @@ MODULE_DEFAULT = {
         "lap_difference_ahead_threshold": 0.9,
         "lap_difference_behind_threshold": 0.9,
     },
+    "module_webserver": {
+        "enable": True,
+        "update_interval": 100,
+        "idle_update_interval": 400,
+    },
     "module_wheels": {
         "enable": True,
         "update_interval": 10,

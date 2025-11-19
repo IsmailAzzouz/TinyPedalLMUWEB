@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TinyPedal - Demo Mode</title>
+    <style>
+        /* Same styles as index.html */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .demo-notice {
+            background: #ff9900;
+            color: #000;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .container {
+            width: 1920px;
+            height: 300px;
+            position: relative;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border: 3px solid #ff0033;
+            border-radius: 10px;
+            box-shadow: 0 0 40px rgba(255, 0, 51, 0.5);
+            overflow: hidden;
+        }
+
+        .racing-stripe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, 
+                #ff0033 0%, 
+                #ff6600 25%, 
+                #ffcc00 50%, 
+                #00ff00 75%, 
+                #0066ff 100%);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .header {
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff0033;
+            text-shadow: 0 0 10px rgba(255, 0, 51, 0.8);
+        }
+
+        .connection-status {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            background: #ff9900;
+            color: #000;
+            box-shadow: 0 0 10px rgba(255, 153, 0, 0.8);
+        }
+
+        .main-display {
+            position: absolute;
+            top: 50px;
+            left: 0;
+            width: 100%;
+            height: 250px;
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .left-panel, .right-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            gap: 10px;
+        }
+
+        .center-panel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .data-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 10px 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .data-label {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .data-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .data-value.highlight {
+            color: #ff0033;
+            text-shadow: 0 0 10px rgba(255, 0, 51, 0.6);
+        }
+
+        .data-value.success {
+            color: #00ff00;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.6);
+        }
+
+        .gear-display {
+            font-size: 120px;
+            font-weight: bold;
+            color: #ff0033;
+            text-shadow: 0 0 20px rgba(255, 0, 51, 0.8);
+            line-height: 1;
+        }
+
+        .speed-display {
+            font-size: 72px;
+            font-weight: bold;
+            color: #00ffff;
+            text-shadow: 0 0 15px rgba(0, 255, 255, 0.6);
+        }
+
+        .rpm-bar {
+            width: 100%;
+            height: 30px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .rpm-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff00, #ffff00, #ff6600, #ff0000);
+            transition: width 0.1s ease-out;
+            border-radius: 15px;
+        }
+
+        .rpm-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 5px #000;
+        }
+
+        .pedals {
+            display: flex;
+            gap: 10px;
+            justify-content: space-between;
+        }
+
+        .pedal {
+            flex: 1;
+            height: 80px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .pedal-fill {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            transition: height 0.05s ease-out;
+        }
+
+        .pedal-fill.throttle {
+            background: linear-gradient(0deg, #00ff00, #88ff88);
+        }
+
+        .pedal-fill.brake {
+            background: linear-gradient(0deg, #ff0000, #ff8888);
+        }
+
+        .pedal-fill.clutch {
+            background: linear-gradient(0deg, #0088ff, #88ccff);
+        }
+
+        .pedal-label {
+            position: absolute;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 5px #000;
+            z-index: 1;
+        }
+
+        .lap-times {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .lap-time-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .lap-time-label {
+            color: #888;
+            min-width: 60px;
+        }
+
+        .lap-time-value {
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+        }
+
+        .small-data {
+            font-size: 18px;
+        }
+
+        @media (max-width: 1920px) {
+            .container {
+                transform: scale(0.8);
+                transform-origin: center;
+            }
+        }
+
+        @media (max-width: 1536px) {
+            .container {
+                transform: scale(0.6);
+                transform-origin: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-notice">DEMO MODE - Simulated Telemetry Data</div>
+    
+    <div class="container">
+        <div class="racing-stripe"></div>
+        <div class="header">TINYPEDAL LIVE</div>
+        <div class="connection-status">DEMO MODE</div>
+        
+        <div class="main-display">
+            <!-- Left Panel -->
+            <div class="left-panel">
+                <div class="data-box">
+                    <div class="data-label">Position</div>
+                    <div class="data-value highlight" id="position">2</div>
+                </div>
+                
+                <div class="data-box">
+                    <div class="data-label">Lap</div>
+                    <div class="data-value" id="lapNumber">12</div>
+                </div>
+
+                <div class="data-box lap-times">
+                    <div class="lap-time-item">
+                        <span class="lap-time-label">Current:</span>
+                        <span class="lap-time-value" id="lapTimeCurrent">1:34:567</span>
+                    </div>
+                    <div class="lap-time-item">
+                        <span class="lap-time-label">Last:</span>
+                        <span class="lap-time-value" id="lapTimeLast">1:33:245</span>
+                    </div>
+                    <div class="lap-time-item">
+                        <span class="lap-time-label success">Best:</span>
+                        <span class="lap-time-value success" id="lapTimeBest">1:32:123</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center Panel -->
+            <div class="center-panel">
+                <div class="gear-display" id="gear">6</div>
+                <div class="speed-display"><span id="speed">288</span> <span style="font-size: 36px;">km/h</span></div>
+                
+                <div class="rpm-bar">
+                    <div class="rpm-fill" id="rpmFill" style="width: 82%;"></div>
+                    <div class="rpm-text" id="rpmText">9850 RPM</div>
+                </div>
+
+                <div class="pedals">
+                    <div class="pedal">
+                        <div class="pedal-label">T</div>
+                        <div class="pedal-fill throttle" id="throttle" style="height: 98.5%;"></div>
+                    </div>
+                    <div class="pedal">
+                        <div class="pedal-label">B</div>
+                        <div class="pedal-fill brake" id="brake" style="height: 0%;"></div>
+                    </div>
+                    <div class="pedal">
+                        <div class="pedal-label">C</div>
+                        <div class="pedal-fill clutch" id="clutch" style="height: 0%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel -->
+            <div class="right-panel">
+                <div class="data-box">
+                    <div class="data-label">Fuel</div>
+                    <div class="data-value small-data" id="fuel">18.7 L</div>
+                </div>
+
+                <div class="data-box">
+                    <div class="data-label">Tire Temps (°C)</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 5px;">
+                        <div class="data-value small-data" id="tireTempFL">93</div>
+                        <div class="data-value small-data" id="tireTempFR">94</div>
+                        <div class="data-value small-data" id="tireTempRL">89</div>
+                        <div class="data-value small-data" id="tireTempRR">91</div>
+                    </div>
+                </div>
+
+                <div class="data-box">
+                    <div class="data-label">Session Time</div>
+                    <div class="data-value small-data" id="sessionTime">30:47</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Animate demo data
+        let time = 0;
+        const MAX_RPM = 12000;
+        
+        function animateDemo() {
+            time += 0.05;
+            
+            // Animate speed (250-300 km/h)
+            const speed = 275 + Math.sin(time) * 15;
+            document.getElementById('speed').textContent = Math.round(speed);
+            
+            // Animate RPM (8000-11000)
+            const rpm = 9500 + Math.sin(time * 2) * 1500;
+            const rpmPercent = Math.min((rpm / MAX_RPM) * 100, 100);
+            document.getElementById('rpmFill').style.width = rpmPercent + '%';
+            document.getElementById('rpmText').textContent = Math.round(rpm) + ' RPM';
+            
+            // Animate throttle
+            const throttle = 85 + Math.sin(time * 1.5) * 15;
+            document.getElementById('throttle').style.height = throttle + '%';
+            
+            // Animate brake (occasional braking)
+            const brake = Math.max(0, Math.sin(time * 0.5) * 40);
+            document.getElementById('brake').style.height = brake + '%';
+            
+            requestAnimationFrame(animateDemo);
+        }
+        
+        animateDemo();
+    </script>
+</body>
+</html>
